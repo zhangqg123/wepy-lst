@@ -78,7 +78,7 @@ export default class Pagination {
   reset () {
     this.empty = true;
     this.toClear = true;
-    this.start = 0;
+    this.start = 1;
     this.reachBottom = false;
   }
   clear () {

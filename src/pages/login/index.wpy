@@ -32,7 +32,7 @@
           </view>
           <view class="weui-btn-area" >
             <view class="row-between mr20 ml20 mt20" >
-              <view @tap="enter"><text class="primary xl">我要注册</text></view>
+              <view @tap="register"><text class="primary xl">我要注册</text></view>
               <view @tap="follow"><text class="primary xl">关注学生</text></view>
             </view>
           </view>
@@ -80,7 +80,7 @@
       }
     }
     methods = {
-      async enter() {
+      async register() {
         this.$root.$navigate('/pages/login/register');
       },
       async follow() {
@@ -127,7 +127,7 @@
 
     mixins = [input, base];
     config = {
-      navigationBarTitleText: '浪潮家教'
+      navigationBarTitleText: '龙视'
     };
     components = {
       Tips: FormTips,

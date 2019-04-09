@@ -95,7 +95,7 @@ export default class auth extends base {
     postParams[1]=["status","login"];
     postParams[2]=["xcxId",xcxId];
     var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/exam/login.do?nonce_str=${nonce_str}&sign=${signVal}&status=login&xcxId=${xcxId}`;
+    const url = `${this.baseUrl2}/api/lhs/login.do?nonce_str=${nonce_str}&sign=${signVal}&status=login&xcxId=${xcxId}`;
 
 //    const url = `${this.baseUrl2}/rest/tokens?username=interfaceuser&password=123456`;
 

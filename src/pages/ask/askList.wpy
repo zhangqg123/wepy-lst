@@ -68,21 +68,26 @@
     };
     data = {...this.def};
     async onLoad (option) {
-      var openId = auth.getConfig('openId');
-      if (openId == null) {
-        openId=await auth.jscode2session();
-        await auth.setConfig('openId', openId);
-      }
-      await this.getColumnList();
-      if(option!=null&&option.columnId!=null){
-        this.categories.selectedId = option.columnId;
-      }
+      try{
+        var openId = auth.getConfig('openId');
+        if (openId == null) {
+          openId=await auth.jscode2session();
+          await auth.setConfig('openId', openId);
+        }
+        await this.getColumnList();
+        if(option!=null&&option.columnId!=null){
+          this.categories.selectedId = option.columnId;
+        }
 
-      this.page = ask.askList(this.categories);
-      await this.next();
-//      await this.updateAsk();
-      Event.listen(Event.ASK_LIST_UPDATE, this.updateAsk.bind(this), this);
-      this.loaded();
+        this.page = ask.askList(this.categories);
+        await this.next();
+        console.info("this.page",this.page);
+        Event.listen(Event.ASK_LIST_UPDATE, this.updateAsk.bind(this), this);
+      } catch (e) {
+        Tips.modal(e.message);
+      } finally {
+        this.loaded();
+      }
     };
 
     // 获取分页参数
@@ -94,8 +99,6 @@
     }
     async updateAsk(){
       console.info("updateAsk================");
-//      this.page = ask.askList(this.categories);
-//      await this.next();
       this.reload();
     };
     // 获取部门

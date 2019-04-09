@@ -214,13 +214,13 @@
             </view>
           </view>
 
-          <view class="weui-cell">
+          <view class="weui-cell" wx:if="{{mode == 'trans'}}">
             <view class="weui-cell__hd">
               <view class="weui-label"><text class="primary x1">翻译回答</text></view>
             </view>
           </view>
 
-          <view class="section">
+          <view class="section" wx:if="{{mode == 'trans'}}">
             <video class= "videoCss" src='{{srcTransAnswerUrl}}'></video>
             <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans'}}">
               <view style="width: 425rpx;">
