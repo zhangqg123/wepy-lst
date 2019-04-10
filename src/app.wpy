@@ -13,7 +13,7 @@
   export default class extends wepy.app {
     globalData = {
       auth: {},
-      usertype: "exam",
+      usertype: "lst",
       header: {
         'Content-Type': 'application/json',
         'Cookie': ''
@@ -70,6 +70,7 @@
       console.info('[ext] init ext data', ext);
       Object.assign(wepy.$instance.globalData, ext);
       this.syncStoreConfig('login_code');
+      this.syncStoreConfig('role_code');
       this.syncStoreConfig('status');
       this.syncStoreConfig('openId');
 

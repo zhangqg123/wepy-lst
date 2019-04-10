@@ -112,7 +112,7 @@ export default class auth extends base {
     postParams[1]=["status","userRegister"];
     var signVal=sign.createSign(postParams,appId);//签名
 
-    const url = `${this.baseUrl2}/api/exam/userRegister.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userRegister`;
+    const url = `${this.baseUrl2}/api/lhs/userRegister.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userRegister`;
     const data= await this.post(url, param);
     return data.attributes;
   }
@@ -138,7 +138,7 @@ export default class auth extends base {
     postParams[0]=["nonce_str",nonce_str];
     postParams[1]=["status","userInfo"];
     var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/exam/userInfo.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userInfo`;
+    const url = `${this.baseUrl2}/api/lhs/userInfo.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userInfo`;
     const data = await this.get(url);
     return data.obj;
   }
@@ -172,10 +172,10 @@ export default class auth extends base {
     postParams[2]=["phone",phone];
     postParams[3]=["userkey",code];
     postParams[4]=["openId",openId];
-    postParams[5]=["usertype","exam"];
+    postParams[5]=["usertype",usertype];
     postParams[6]=["xcxId",xcxId];
     var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/exam/smsCodeLogin.do?phone=${phone}&userkey=${code}&openId=${openId}&xcxId=${xcxId}&usertype=exam&nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=smsCode`;
+    const url = `${this.baseUrl2}/api/lhs/smsCodeLogin.do?phone=${phone}&userkey=${code}&openId=${openId}&xcxId=${xcxId}&usertype=${usertype}&nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=smsCode`;
     console.info("url",url);
     const data = await this.get(url);
     return data;
@@ -193,9 +193,9 @@ export default class auth extends base {
     postParams[2]=["phone",phone];
     postParams[3]=["userkey",code];
     postParams[4]=["openId",openId];
-    postParams[5]=["usertype","exam"];
+    postParams[5]=["usertype",usertype];
     var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/exam/follow.do?phone=${phone}&userkey=${code}&openId=${openId}&usertype=exam&nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=follow`;
+    const url = `${this.baseUrl2}/api/exam/follow.do?phone=${phone}&userkey=${code}&openId=${openId}&usertype=${usertype}&nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=follow`;
     console.info("url",url);
     const data = await this.get(url);
     return data;
@@ -208,9 +208,9 @@ export default class auth extends base {
     postParams[1]=["status","followCancel"];
     postParams[2]=["soid",soid];
     postParams[3]=["poid",poid];
-    postParams[4]=["usertype","exam"];
+    postParams[4]=["usertype",usertype];
     var signVal=sign.createSign(postParams,appId);
-    const url = `${this.baseUrl2}/api/exam/followCancel.do?nonce_str=${nonce_str}&sign=${signVal}&status=followCancel&soid=${soid}&poid=${poid}&usertype=exam`;
+    const url = `${this.baseUrl2}/api/exam/followCancel.do?nonce_str=${nonce_str}&sign=${signVal}&status=followCancel&soid=${soid}&poid=${poid}&usertype=${usertype}`;
     const data=await this.get(url);
     return data;
 
@@ -225,10 +225,10 @@ export default class auth extends base {
     postParams[0]=["nonce_str",nonce_str];
     postParams[1]=["status",status];
     postParams[2]=["phone",phone];
-    postParams[3]=["usertype","exam"];
+    postParams[3]=["usertype",usertype];
     postParams[4]=["xcxId",xcxId];
     var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/txsms/smsCode.do?phone=${phone}&usertype=exam&xcxId=${xcxId}&nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=${status}`;
+    const url = `${this.baseUrl2}/api/txsms/smsCode.do?phone=${phone}&usertype=${usertype}&xcxId=${xcxId}&nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=${status}`;
     const data = await this.get(url);
     return data;
   }

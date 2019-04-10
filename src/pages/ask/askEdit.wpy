@@ -270,10 +270,12 @@
       srcTransAskUrl: '',
       srcAnswerUrl: '',
       srcTransAnswerUrl: '',
+
       chooseUrl: '',
       chooseTransAskUrl: '',
       chooseAnswerUrl: '',
       chooseTransAnswerUrl: '',
+      uploadFlag : false,
       mode: 'create',
       loginCode: null,
 //      innerCategories: [],
@@ -336,6 +338,7 @@
 //            that.setData({
 //              src: res.tempFilePath
 //            })
+            self.uploadFlag=false;
             if(option=="create"){
               self.chooseUrl=res.tempFilePath;
             }
@@ -360,6 +363,7 @@
               const file = JSON.parse(result);
               this.chooseUrl=file.attributes.fileKey;
               this.srcUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseUrl;
+              this.uploadFlag=true;
             }
           }
           if(option=="trans"){
@@ -369,6 +373,7 @@
               const file = JSON.parse(result);
               this.chooseTransAskUrl=file.attributes.fileKey;
               this.srcTransAskUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseTransAskUrl;
+              this.uploadFlag=true;
             }
           }
           if(option=="answer"){
@@ -378,6 +383,7 @@
               const file = JSON.parse(result);
               this.chooseAnswerUrl=file.attributes.fileKey;
               this.srcAnswerUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseAnswerUrl;
+              this.uploadFlag=true;
             }
           }
           if(option=="transAnswer"){
@@ -387,6 +393,7 @@
               const file = JSON.parse(result);
               this.chooseTransAnswerUrl=file.attributes.fileKey;
               this.srcTransAnswerUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseTransAnswerUrl;
+              this.uploadFlag=true;
             }
           }
         } catch (e) {
@@ -415,13 +422,16 @@
           var data = {
 
           };
+          var openId = await auth.getConfig('openId');
         
           Tips.loading('保存中', true);
           if(this.mode=="create"){
             data=this.input;
+            data.askOpenId=openId;
             data.categoryId=this.categoryId;
             console.info("data",data);
-            if(this.chooseUrl!=null&&this.chooseUrl!=''){
+            if(this.uploadFlag==true && this.chooseUrl!=null&&this.chooseUrl!=''){
+              data.askStatus=0;
               data.askUrl = this.chooseUrl;
               await ask.createAsk(data);
               await Tips.success('创建成功！');
@@ -435,6 +445,7 @@
           if(this.mode=="trans"){
             data.id=this.askItem.id;
             data.description=this.input.description;
+
             if(this.chooseTransAskUrl!=null&&this.chooseTransAskUrl!=''){
               data.transAskUrl = this.chooseTransAskUrl;
               data.askStatus=1; //翻译提问
@@ -443,13 +454,21 @@
               data.transAnswerUrl = this.chooseTransAnswerUrl;
               data.askStatus=3; //翻译回答
             }
-            console.info("data",data);
+            if(this.uploadFlag==true && data.askStatus==1 || data.askStatus==3){
+              data.dealOpenId=openId;
+              console.info("data",data);
 
-            await ask.updateAsk(data);
-            await Tips.success('更新成功！');
+              await ask.updateAsk(data);
+              await Tips.success('更新成功！');
 
-            Event.emit(Event.ASK_LIST_UPDATE);
-            wepy.navigateBack();
+              Event.emit(Event.ASK_LIST_UPDATE);
+              wepy.navigateBack();
+
+            }else{
+              Tips.loaded();
+              await Tips.modal('请上传视频');
+
+            }
           }
 
           if(this.mode=="answer"){

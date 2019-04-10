@@ -58,7 +58,7 @@
     def = {
       init: false,
       id: null,
-      examId:null,
+      askId:null,
       management:null,
       status: 0,
       redirectUrl:null,
@@ -68,14 +68,16 @@
     async onLoad (option) {
       try {
         console.info("option:",option);
-        const loginCode = auth.getConfig('login_code');
-        this.examId=option.examId;
+//        const loginCode = auth.getConfig('login_code');
+        this.askId=option.askId;
         this.redirectUrl=option.url;
 
       } catch (e) {
-        await auth.removeConfig('login_code');
-        await auth.removeConfig('status');
       } finally {
+        await auth.removeConfig('login_code');
+        await auth.removeConfig('role_code');
+//        await auth.removeConfig('openId');
+        await auth.removeConfig('status');
         this.loaded();
       }
     }
@@ -97,14 +99,18 @@
               password: this.loginMessage.password
             };
             data = await auth.login(param);
-            console.info("data",data);
             if (data.success == true) {
               await auth.setConfig('login_code', data.attributes.login_code);
+              await auth.setConfig('role_code', data.attributes.role_code);
               await auth.setConfig('status',data.attributes.status);
+              console.info("roleCode",auth.getConfig("role_code"));
+
               if(this.redirectUrl!=null){
-                this.$redirect(this.redirectUrl,{examId: this.examId});
+                this.$redirect(this.redirectUrl,{askId: this.askId});
               }else{
-                this.$switch('../home/myproject');
+                await Tips.success("登录成功");
+                wepy.navigateBack();
+//                this.$switch('../home/myproject');
               }
               Event.emit(Event.USER_LOGIN);                
            } else {

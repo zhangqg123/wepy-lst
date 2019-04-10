@@ -134,9 +134,19 @@
           ask.collectFormIds(info.formId);
         }
         if (info.mode=="display" || auth.isLogin()) {
-          this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
+          const roleCode = auth.getConfig('role_code');
+          console.info('roleCode',roleCode);
+          if(info.mode=="display"){
+            this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
+          }else{
+            if(roleCode==info.mode){
+              this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});
+            }else{
+              Tips.modal("没有权限");
+            }
+          }
         }else{
-          this.$root.$navigate('/pages/login/index');
+          this.$root.$navigate('/pages/login/index',{askId: info.askId,mode: info.mode});
         }
       }
 
