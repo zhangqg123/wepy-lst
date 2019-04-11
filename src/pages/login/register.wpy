@@ -38,7 +38,7 @@
     <view wx:if="{{status==2}}">
       <form @submit="userRegister">
         <view class="page__bd form">
-          <view class="weui-cell" @tap="showInner">
+    <!--      <view class="weui-cell" @tap="showInner">
             <view class="weui-cell__hd">
               <view class="weui-label">选择班级</view>
             </view>
@@ -46,7 +46,7 @@
               {{input.deptName ? input.deptName : '请选择班级'}}
             </view>
             <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-          </view>
+          </view> -->
          <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell weui-cell_input weui-cell_vcode">
               <view class="weui-cell__hd">
@@ -76,7 +76,7 @@
 
   <Copyright buttom="true" />
   <!-- 分类 -->
-  <SliderPanel :display.sync="isInnerDisplay" btn='false'>
+<!--  <SliderPanel :display.sync="isInnerDisplay" btn='false'>
     <view slot="title">班级</view>
     <view slot="content" class="weui-cells-form">
       <radio-group id="deptName" key="" bindchange="radio" @tap="selectInner">
@@ -90,7 +90,7 @@
       </radio-group>
 
     </view>
-  </SliderPanel>
+  </SliderPanel>  -->
 </template>
 <script>
   import wepy from 'wepy';
@@ -110,7 +110,7 @@
       init: false,
       loginCode:null,
       status: 0,
-      isInnerDisplay: 'false',
+//      isInnerDisplay: 'false',
       innerDept: [],
       input:{},
       loginMessage: {}
@@ -132,13 +132,13 @@
         console.info("radio",e.detail.value);
       },
       // 选择分类
-      selectInner() {
-        this.isInnerDisplay = 'false';
-      },
+//      selectInner() {
+//        this.isInnerDisplay = 'false';
+//      },
       // 展现分类
-      showInner() {
-        this.isInnerDisplay = 'true';
-      },
+//      showInner() {
+//        this.isInnerDisplay = 'true';
+//      },
       async smsCode() {
         if (!this.isPhoneValid(this.input.phone)) {
           return;
@@ -221,12 +221,12 @@
         }
       },
       async userRegister({detail}) {
-        if (!this.input.deptName) {
+/*        if (!this.input.deptName) {
           this.tips('请选择班级');
           return;
         }
         var deptid = this.innerDept.find(item => item.deptName == this.input.deptName).id;
-        console.info("deptid",deptid);
+        console.info("deptid",deptid); */
         // 覆盖对象
         Object.assign(this.loginMessage, detail.value);
         if (!this.validatePassword(this.loginMessage)) {
@@ -237,7 +237,7 @@
           const param = {
             id: this.loginCode,
             password: this.loginMessage.password,
-            deptid: deptid
+//            deptid: deptid
           };
 
           try {

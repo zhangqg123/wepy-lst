@@ -28,12 +28,11 @@
           </view>
 
           <view class="weui-btn-area">
-            <button class="weui-btn" type="primary" form-type="submit">确定</button>
-          </view>
-          <view class="weui-btn-area" >
-            <view class="row-between mr20 ml20 mt20" >
-              <view @tap="register"><text class="primary xl">我要注册</text></view>
-              <view @tap="follow"><text class="primary xl">关注学生</text></view>
+            <view>
+              <button class="weui-btn" type="primary" form-type="submit">确定</button>
+            </view>
+            <view class="row-center mt20" @tap="register">
+              <text class="primary xl">我要注册</text>
             </view>
           </view>
         </view>

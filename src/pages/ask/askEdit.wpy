@@ -431,7 +431,7 @@
             data.categoryId=this.categoryId;
             console.info("data",data);
             if(this.uploadFlag==true && this.chooseUrl!=null&&this.chooseUrl!=''){
-              data.askStatus=0;
+              data.askStatus=11; // 11 提问上传未审核 12 提问审核通过
               data.askUrl = this.chooseUrl;
               await ask.createAsk(data);
               await Tips.success('创建成功！');
@@ -448,13 +448,13 @@
 
             if(this.chooseTransAskUrl!=null&&this.chooseTransAskUrl!=''){
               data.transAskUrl = this.chooseTransAskUrl;
-              data.askStatus=1; //翻译提问
+              data.askStatus=21; //翻译提问
             }
             if(this.chooseTransAnswerUrl!=null&&this.chooseTransAnswerUrl!=''){
               data.transAnswerUrl = this.chooseTransAnswerUrl;
-              data.askStatus=3; //翻译回答
+              data.askStatus=41; //翻译回答
             }
-            if(this.uploadFlag==true && data.askStatus==1 || data.askStatus==3){
+            if(this.uploadFlag==true && data.askStatus==21 || data.askStatus==41){
               data.dealOpenId=openId;
               console.info("data",data);
 
@@ -475,17 +475,21 @@
             data.id=this.askItem.id;
 //            data.description=this.input.description;
 
-            if(this.chooseAnswerUrl!=null&&this.chooseAnswerUrl!=''){
+            if(this.uploadFlag==true && this.chooseAnswerUrl!=null&&this.chooseAnswerUrl!=''){
+              data.answerOpenId=openId;
               data.answerUrl = this.chooseAnswerUrl;
-              data.askStatus=2; //回答提问
+              data.askStatus=31; // 31 回答提问未审核 32 回答审核通过
+              console.info("data",data);
+
+              await ask.updateAsk(data);
+              await Tips.success('更新成功！');
+
+              Event.emit(Event.ASK_LIST_UPDATE);
+              wepy.navigateBack();
+            }else{
+              Tips.loaded();
+              await Tips.modal('请上传视频');
             }
-            console.info("data",data);
-
-            await ask.updateAsk(data);
-            await Tips.success('更新成功！');
-
-            Event.emit(Event.ASK_LIST_UPDATE);
-            wepy.navigateBack();
           }
         } catch (e) {
           this.tips(e.message);

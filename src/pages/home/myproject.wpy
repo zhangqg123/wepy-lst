@@ -9,7 +9,7 @@
     <!--操作区域-->
     <view class="operation-box">
       <view class="operation-row row-around" >
-        <form bindsubmit="myOpt('ask')" report-submit='true'>
+        <form bindsubmit="myOpt('create')" report-submit='true'>
           <button plain form-type="submit" >
             <view class="operation-row column-center">
               <image src="/images/home/shop.png"/>
@@ -150,13 +150,19 @@
       }
     };
     methods = {
-      async myOpt (opt,e) {
+      async myOpt (mode,e) {
         this.collect(e.detail.formId);
-        console.info("opt",opt);
         if(this.userInfo.status==0){
           this.$root.$navigate('/pages/login/index');
         }else{
-          this.$navigate('../ask/askList', {phone: this.userInfo.phone});
+          var roleCode=auth.getConfig('role_code');
+          console.info('roleCode',roleCode);
+          if(mode==roleCode){
+            this.$navigate('../job/jobList', {mode:mode, phone: this.userInfo.phone});
+          }else{
+            Tips.error('没有权限');
+          }
+          
         }
       },
       async scan (e) {
