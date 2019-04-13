@@ -57,8 +57,8 @@
       tab: {
         list: [
           {id: 'all', title: '全部'},
-          {id: 'heat', title: '热度'},
-          {id: 'run', title: '跑动'},
+          {id: 'transAsk', title: '已翻译'},
+          {id: 'transAnswer', title: '已完结'},
           {id: 'category', title: '分类'}
         ],
         selectedId: 'all',
@@ -93,7 +93,7 @@
     // 获取分页参数
     params() {
       return {
-        guide_status: this.tab.selectedId,
+        ask_status: this.tab.selectedId,
         category_id: this.categories.selectedId
       };
     }
@@ -115,6 +115,7 @@
     methods = {
       // 点击分类
       switchTab(selectedId) {
+//        this.tab.categoryId = selectedId;
         this.reload();
       },
 
@@ -139,7 +140,7 @@
           if(info.mode=="display"){
             this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
           }else{
-            if(roleCode==info.mode){
+            if(roleCode.indexOf(info.mode) != -1){
               this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});
             }else{
               Tips.modal("没有权限");

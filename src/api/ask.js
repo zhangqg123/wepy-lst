@@ -95,6 +95,20 @@ export default class ask extends base {
   static _processAskList(categories,item) {
     const id=item.categoryId;
     item.categoryName = categories.find(item => item.id == id).columnName;
+    switch (item.askStatus) {
+      case 11 : item.statusName = '提问待审核';
+        break;
+      case 12 : item.statusName = '提问已审核';
+        break;
+      case 21 : item.statusName = '提问已翻译';
+        break;
+      case 31 : item.statusName = '回答待审核';
+        break;
+      case 32 : item.statusName = '回答已审核';
+        break;
+      case 41 : item.statusName = '回答已翻译';
+        break;
+    }
   }
 
   static async queryOneAsk (askId) {

@@ -13,7 +13,7 @@
           </view>
           <view class="count-item">
             <text class="weak mr20">提问人</text>
-            <text class="weak ml20">{{ask.askOpenId}}</text>
+            <text class="weak ml20">匿名</text>
           </view>
         </view>
 
@@ -24,7 +24,7 @@
           </view>
           <view class="count-item">
             <text class="weak mr20">状态</text>
-            <text class="weak ml20">{{ask.askStatus==null?'':ask.askStatus}}</text>
+            <text class="weak ml20">{{ask.statusName==null?'':ask.statusName}}</text>
           </view>
         </view>
 

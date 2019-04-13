@@ -157,7 +157,7 @@
         }else{
           var roleCode=auth.getConfig('role_code');
           console.info('roleCode',roleCode);
-          if(mode==roleCode){
+          if(roleCode.indexOf(mode) != -1){
             this.$navigate('../job/jobList', {mode:mode, phone: this.userInfo.phone});
           }else{
             Tips.error('没有权限');

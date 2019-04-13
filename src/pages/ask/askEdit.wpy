@@ -304,7 +304,10 @@
           this.askItem = await ask.queryOneAsk(option.askId);
           this.input=this.askItem;
           console.info("this.input",this.input);
-          this.srcUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.askUrl;
+          if(this.input.askUrl!=null&&this.input.askUrl!=''){
+            this.srcUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.askUrl;
+          }
+          
           if(this.input.transAskUrl!=null&&this.input.transAskUrl!=''){
             this.srcTransAskUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.transAskUrl;
 
