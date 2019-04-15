@@ -22,8 +22,10 @@
       </scroll-view>
 
     </view>
-    <!--操作栏-->
-<!--    <ActionBar @tap.user="add" okText="新增商品" cancelText="返回" /> -->
+    <!--操作栏--> 
+    <view >
+      <ActionBar @optAsk.user="optAsk" @back.user="back" create="我来提问"  cancelText="返回" noCancel="0"  /> 
+    </view>
   </view>
   <view wx:if="{{display == 'true'}}">
     <SideCategory :display.sync="display" :tab.sync="categories" @change.user="switchTab"  />    
@@ -81,7 +83,6 @@
 
         this.page = ask.askList(this.categories);
         await this.next();
-        console.info("this.page",this.page);
         Event.listen(Event.ASK_LIST_UPDATE, this.updateAsk.bind(this), this);
       } catch (e) {
         Tips.modal(e.message);
@@ -136,20 +137,32 @@
         }
         if (info.mode=="display" || auth.isLogin()) {
           const roleCode = auth.getConfig('role_code');
-          console.info('roleCode',roleCode);
-          if(info.mode=="display"){
-            this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
-          }else{
-            if(roleCode.indexOf(info.mode) != -1){
-              this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});
+          if(roleCode!=null){
+            console.info('roleCode',roleCode);
+            if(info.mode=="display"){
+              this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
             }else{
-              Tips.modal("没有权限");
+              if(roleCode.indexOf(info.mode) != -1){
+                this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});
+              }else{
+                Tips.modal("没有权限");
+              }
             }
+
+          }else{
+            this.$root.$navigate('/pages/login/index',{askId: info.askId,mode: info.mode});
           }
         }else{
           this.$root.$navigate('/pages/login/index',{askId: info.askId,mode: info.mode});
         }
-      }
+      },
+      back(info) {
+        console.info("info",info);
+        if(info.formId !=null && info.formId != "the formId is a mock one"){
+          exam.collectFormIds(info.formId);
+        }
+        wepy.navigateBack();
+      },
 
     };
     computed = {

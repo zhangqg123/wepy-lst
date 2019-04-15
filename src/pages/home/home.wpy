@@ -126,7 +126,13 @@
           title: this.menu[0].name  //页面标题为动态参数
         })
         this.active = columnId;
-        this.page = ask.articleList("all");
+        var menus='';
+        for(var i = 0; i < this.menu.length; i++){
+          menus+=this.menu[i].id+",";
+        }
+        menus = menus.substring(0, menus.length - 1)
+        console.info("menus",menus);
+        this.page = ask.articleList(menus);
         await this.next();
 
         Event.listen(Event.USER_LOGOUT, this.clear.bind(this), this);

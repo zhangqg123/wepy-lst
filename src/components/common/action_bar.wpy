@@ -1,21 +1,16 @@
 <template>
   <view class="action-bar-placeholder"></view>
-  <view class="action-bar row-center fixed-bottom" wx:if="{{noCancel == 0}}">
-    <form bindsubmit="tap" report-submit='true' class="action">
-      <button form-type="submit" class="but-action secondary-action row-center">
-        <text>{{examListText}}</text>
-      </button>
-    </form>  
-    <form bindsubmit="answer" report-submit='true' class="action">
+  <view class="action-bar row-center fixed-bottom" wx:if="{{noCancel == 1}}">
+    <form bindsubmit="optAsk" report-submit='true' class="action">
       <button form-type="submit" class="but-action {{okType}}-acton row-center">
-        <text>{{answerText}}</text>
+        <text>{{create}}</text>
       </button>
     </form>  
   </view>
   <view class="action-bar row-center fixed-bottom" wx:else>
-    <form bindsubmit="tap" report-submit='true' class="action">
+    <form bindsubmit="optAsk" report-submit='true' class="action">
       <button form-type="submit" class="but-action {{okType}}-acton row-center">
-        <text>{{examListText}}</text>
+        <text>{{create}}</text>
       </button>
     </form>  
     <form bindsubmit="back" report-submit='true' class="action">
@@ -35,11 +30,8 @@
       okType: {
         default: 'primary'
       },
-      examListText: {
+      create: {
         default: '确定'
-      },
-      answerText: {
-        default: '查看答案'
       },
       cancelText: {
         default: '取消'
@@ -49,13 +41,9 @@
       }
     };
     methods = {
-      tap(e) {
+      optAsk(e) {
         var formId=e.detail.formId;
-        this.$emit('tap',{formId:formId});
-      },
-      answer(e) {
-        var formId=e.detail.formId;
-        this.$emit('answer',{formId:formId});
+        this.$emit('optAsk',{formId:formId,mode:'create'});
       },
       back(e) {
         var formId=e.detail.formId;
