@@ -1,8 +1,8 @@
 <template>
   <view class="container" wx:if="{{init}}">
     <view class="top-box row">
-      <text class="default xxl" decode="{{true}}">提问人: </text>
-      <text class="primary xxl">{{ phone  }}</text>
+      <text class="default xxl mr20" >{{ jobTitle }}人 </text>
+      <text class="primary xxl ml20">{{ phone  }}</text>
     </view>
     <view class="h-gap"/>
     <!--主内容区域-->
@@ -43,6 +43,7 @@
     def = {
       init: false,
       display: 'false',
+      jobTitle:'',
       openId : '',
       phone: 1,
       page: {
@@ -61,6 +62,19 @@
           await auth.setConfig('openId', openId);
         }
         this.openId=openId;
+
+        if(option.mode=="create"){
+          this.jobTitle="提问";
+        }
+        if(option.mode=="trans"){
+          this.jobTitle="翻译";
+        }
+        if(option.mode=="answer"){
+          this.jobTitle="回答";
+        }
+        wx.setNavigationBarTitle({
+          title: "我的"+this.jobTitle  //页面标题为动态参数
+        })
         this.mode=option.mode;
         this.categories = await Cache.columnList();
 
@@ -99,7 +113,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '提问列表',
+ //     navigationBarTitleText: '提问列表',
       enablePullDownRefresh: true
     };
   }

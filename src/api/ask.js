@@ -65,9 +65,7 @@ export default class ask extends base {
     return data;
   }
   static articleList(columnId) {
-//    var createBy=wepy.$instance.globalData.createBy;
     const url = `${this.baseUrl2}/work/cms/articleList.do?columnId=${columnId}&xcxId=${xcxId}`;
-    console.info("url",url);
     return new Page(url, this._processNoList.bind(this));
   }
   static _processNoList(item) {
@@ -118,13 +116,15 @@ export default class ask extends base {
   }
   
   static async upload(filePath) {
+    var openId=wepy.$instance.globalData.auth["openId"];
+
     var nonce_str = rand.getRand();//随机数
     var postParams=[];
     postParams[0]=["nonce_str",nonce_str];
     postParams[1]=["status","upload"];
-//    postParams[2]=["existFile",existFile];
+    postParams[2]=["openId",openId];
     var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/lst/doUpload.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=upload`;
+    const url = `${this.baseUrl2}/api/lst/doUpload.do?openId=${openId}&nonce_str=`+nonce_str+`&sign=`+signVal+`&status=upload`;
     const param = {
       url,
       filePath,

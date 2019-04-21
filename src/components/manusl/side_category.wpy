@@ -3,7 +3,7 @@
   <view class="slider-panel-cover" wx:if="{{display == 'true'}}" @tap="close"></view>
   <scroll-view class="side-category {{display == 'true' ? 'slider-panel-show' : '' }} " scroll-y>
     <block wx:for="{{tab}}" wx:key="id">
-      <view class="tab-item {{item.id == tab.selectedId ? 'tab-item-seleted' : ''}}" @tap="switchTab({{item.id}})" >
+      <view class="tab-item {{item.id == tab.selectedId ? 'tab-item-seleted' : ''}}" @tap="switchTab({{item.id}},{{item.columnName}})" >
         <text class="inline">{{item.columnName}}</text>
         <view class="weui-badge tab-num" wx:if="{{item.count > 0}}">{{item.count}}</view> 
       </view>
@@ -29,10 +29,10 @@
     };
     data = {};
     methods = {
-      switchTab(selectedId) {
+      switchTab(selectedId,columnName) {
         this.tab.selectedId = selectedId;
         this.display="false";
-        this.$emit('change', selectedId);
+        this.$emit('change', {selectedId:selectedId,columnName:columnName});
       },
       close() {
         this.display = 'false';

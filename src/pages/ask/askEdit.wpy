@@ -118,7 +118,7 @@
             <video class= "videoCss" src='{{srcUrl}}' ></video>
             <view class="weui-cell weui-cell_input">
               <view style="width: 425rpx;">
-                <input class="weui-input" id="askUrl" value="{{chooseUrl}}" placeholder="请选择视频上传" />
+                <input class="weui-input" id="askUrl" value="{{chooseDisplay}}" placeholder="请选择视频上传" />
               </view>
               <view class="ml20 row" style="width: 325rpx;">
                 <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo('create')">选择</button>
@@ -187,7 +187,7 @@
             <video class= "videoCss" src='{{srcTransAskUrl}}'></video>
             <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans'}}">
               <view style="width: 425rpx;">
-                <input class="weui-input" id="transAskUrl" value="{{chooseTransAskUrl}}" placeholder="请选择上传视频"/>
+                <input class="weui-input" id="transAskUrl" value="{{chooseTransAskDisplay}}" placeholder="请选择上传视频"/>
               </view>
               <view class="ml20 row" style="width: 325rpx;">
                 <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo('trans')">选择</button>
@@ -205,7 +205,7 @@
             <video class= "videoCss" src='{{srcAnswerUrl}}' ></video>
             <view class="weui-cell weui-cell_input" wx:if="{{mode == 'answer'}}">
               <view style="width: 425rpx;">
-                <input class="weui-input" id="answerUrl" value="{{chooseAnswerUrl}}" placeholder="请选择上传视频"/>
+                <input class="weui-input" id="answerUrl" value="{{chooseAnswerDisplay}}" placeholder="请选择上传视频"/>
               </view>
               <view class="ml20 row" style="width: 325rpx;">
                 <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo('answer')">选择</button>
@@ -224,7 +224,7 @@
             <video class= "videoCss" src='{{srcTransAnswerUrl}}'></video>
             <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans'}}">
               <view style="width: 425rpx;">
-                <input class="weui-input" id="transAnswerUrl" value="{{chooseTransAnswerUrl}}" placeholder="请选择上传视频"/>
+                <input class="weui-input" id="transAnswerUrl" value="{{chooseTransAnswerDisplay}}" placeholder="请选择上传视频"/>
               </view>
               <view class="ml20 row" style="width: 325rpx;">
                 <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo('transAnswer')">选择</button>
@@ -270,10 +270,13 @@
       srcTransAskUrl: '',
       srcAnswerUrl: '',
       srcTransAnswerUrl: '',
-
+      chooseDisplay:'',
       chooseUrl: '',
+      chooseTransAskDisplay:'',
       chooseTransAskUrl: '',
+      chooseAnswerDisplay:'',
       chooseAnswerUrl: '',
+      chooseTransAnswerDisplay: '',
       chooseTransAnswerUrl: '',
       uploadFlag : false,
       mode: 'create',
@@ -285,6 +288,7 @@
     data = {...this.def};
     async onLoad (option) {
       try {
+        var baseUpload='/upload/img/lst/';
         console.info("option",option);
         if(option.mode=="create"){
           this.mode="create";
@@ -305,19 +309,20 @@
           this.input=this.askItem;
           console.info("this.input",this.input);
           if(this.input.askUrl!=null&&this.input.askUrl!=''){
-            this.srcUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.askUrl;
+            this.srcUrl = wepy.$instance.globalData.baseUrl2+baseUpload+this.input.askOpenId+'/'+this.input.askUrl;
+            console.info("this.srcUrl",this.srcUrl);
           }
           
           if(this.input.transAskUrl!=null&&this.input.transAskUrl!=''){
-            this.srcTransAskUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.transAskUrl;
+            this.srcTransAskUrl = wepy.$instance.globalData.baseUrl2+baseUpload+this.input.dealOpenId+'/'+this.input.transAskUrl;
 
           }
           if(this.input.answerUrl!=null&&this.input.answerUrl!=''){
-            this.srcAnswerUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.answerUrl;
+            this.srcAnswerUrl = wepy.$instance.globalData.baseUrl2+baseUpload+this.input.answerOpenId+'/'+this.input.answerUrl;
 
           }
           if(this.input.transAnswerUrl!=null&&this.input.transAnswerUrl!=''){
-            this.srcTransAnswerUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.input.transAnswerUrl;
+            this.srcTransAnswerUrl = wepy.$instance.globalData.baseUrl2+baseUpload+this.input.dealOpenId+'/'+this.input.transAnswerUrl;
 
           }
         }
@@ -343,15 +348,19 @@
 //            })
             self.uploadFlag=false;
             if(option=="create"){
+              self.chooseDisplay='已选择视频，请上传';
               self.chooseUrl=res.tempFilePath;
             }
             if(option=="trans"){
+              self.chooseTransAskDisplay='已选择视频，请上传';
               self.chooseTransAskUrl=res.tempFilePath;
             }
             if(option=="answer"){
+              self.chooseAnswerDisplay='已选择视频，请上传';
               self.chooseAnswerUrl=res.tempFilePath;
             }
             if(option=="transAnswer"){
+              self.chooseTransAnswerDisplay='已选择视频，请上传';
               self.chooseTransAnswerUrl=res.tempFilePath;
             }
           }
@@ -364,8 +373,12 @@
               Tips.loading('上传中');
               const result = await ask.upload(this.chooseUrl);
               const file = JSON.parse(result);
+
+              this.chooseDisplay='已上传视频，请保存';
+
               this.chooseUrl=file.attributes.fileKey;
-              this.srcUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseUrl;
+              this.srcUrl = wepy.$instance.globalData.baseUrl2+'/'+file.attributes.url+this.chooseUrl;
+              console.info('this.srcUrl',this.srcUrl);
               this.uploadFlag=true;
             }
           }
@@ -374,8 +387,9 @@
               Tips.loading('上传中');
               const result = await ask.upload(this.chooseTransAskUrl);
               const file = JSON.parse(result);
+              this.chooseTransAskDisplay='已上传视频，请保存';
               this.chooseTransAskUrl=file.attributes.fileKey;
-              this.srcTransAskUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseTransAskUrl;
+              this.srcTransAskUrl = wepy.$instance.globalData.baseUrl2+'/'+file.attributes.url+this.chooseTransAskUrl;
               this.uploadFlag=true;
             }
           }
@@ -384,8 +398,9 @@
               Tips.loading('上传中');
               const result = await ask.upload(this.chooseAnswerUrl);
               const file = JSON.parse(result);
+              this.chooseAnswerDisplay='已上传视频，请保存';
               this.chooseAnswerUrl=file.attributes.fileKey;
-              this.srcAnswerUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseAnswerUrl;
+              this.srcAnswerUrl = wepy.$instance.globalData.baseUrl2+'/'+file.attributes.url+this.chooseAnswerUrl;
               this.uploadFlag=true;
             }
           }
@@ -394,8 +409,9 @@
               Tips.loading('上传中');
               const result = await ask.upload(this.chooseTransAnswerUrl);
               const file = JSON.parse(result);
+              this.chooseTransAnswerDisplay='已上传视频，请保存';
               this.chooseTransAnswerUrl=file.attributes.fileKey;
-              this.srcTransAnswerUrl = wepy.$instance.globalData.baseUrl2+'/upload/img/lst/'+this.chooseTransAnswerUrl;
+              this.srcTransAnswerUrl = wepy.$instance.globalData.baseUrl2+'/'+file.attributes.url+this.chooseTransAnswerUrl;
               this.uploadFlag=true;
             }
           }

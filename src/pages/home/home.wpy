@@ -11,7 +11,7 @@
         <form bindsubmit="menu({{menu[0]}})" report-submit='true'>
           <button plain form-type="submit" >
             <view class="operation-row column-center">
-              <image src="/images/home/zw1.png"/>
+              <image src="/images/home/zw6.png"/>
               <text>{{menu[0].name}}</text>
             </view>
           </button>
@@ -19,7 +19,7 @@
         <form bindsubmit="menu({{menu[1]}})" report-submit='true'>
           <button plain form-type="submit" >
             <view class="operation-row column-center">
-              <image src="/images/home/zw2.png"/>
+              <image src="/images/home/zw1.png"/>
               <text>{{menu[1].name}}</text>
             </view>
           </button>
@@ -27,16 +27,8 @@
         <form bindsubmit="menu({{menu[2]}})" report-submit='true'>
           <button plain form-type="submit" >
             <view class="operation-row column-center">
-              <image src="/images/home/zw3.png"/>
+              <image src="/images/home/zw2.png"/>
               <text>{{menu[2].name}}</text>
-            </view>
-          </button>
-        </form>            
-        <form bindsubmit="menu({{menu[3]}})" report-submit='true'>
-          <button plain form-type="submit" >
-            <view class="operation-row column-center">
-              <image src="/images/home/zw4.png"/>
-              <text>{{menu[3].name}}</text>
             </view>
           </button>
         </form>            
@@ -46,6 +38,33 @@
               <text>客服消息</text>
             </view>
           </button> -->
+         
+     </view>
+      <view class="operation-row row-around" >
+        <form bindsubmit="menu({{menu[3]}})" report-submit='true'>
+          <button plain form-type="submit" >
+            <view class="operation-row column-center">
+              <image src="/images/home/zw3.png"/>
+              <text>{{menu[3].name}}</text>
+            </view>
+          </button>
+        </form>            
+        <form bindsubmit="menu({{menu[4]}})" report-submit='true'>
+          <button plain form-type="submit" >
+            <view class="operation-row column-center">
+              <image src="/images/home/zw4.png"/>
+              <text>{{menu[4].name}}</text>
+            </view>
+          </button>
+        </form>            
+        <form bindsubmit="menu({{menu[5]}})" report-submit='true'>
+          <button plain form-type="submit" >
+            <view class="operation-row column-center">
+              <image src="/images/home/zw5.png"/>
+              <text>{{menu[5].name}}</text>
+            </view>
+          </button>
+        </form>            
          
      </view>
 
@@ -117,24 +136,31 @@
         this.param.adUpload = upload;
 
         const json = await Cache.menuList();
-        this.param.adImgs=json;
+        var adMenu = [];
+
+        for (var i = 0; i < json.length; ++i) {
+          if(json[i].serialNumber>110 && json[i].serialNumber<115){
+            adMenu.push(json[i]);
+          }
+        }
+        console.info("adMenu",adMenu);
+        this.param.adImgs=adMenu;
         this.menu = json;
         //初始化加载第一个栏目文章信息
-        var columnId = this.menu[0].id;
-        wepy.$instance.globalData.createBy=this.menu[0].createBy;
+        var columnId = this.menu[6].id;
+        wepy.$instance.globalData.createBy=this.menu[6].createBy;
         wx.setNavigationBarTitle({
-          title: this.menu[0].name  //页面标题为动态参数
+          title: this.menu[6].name  //页面标题为动态参数
         })
         this.active = columnId;
-        var menus='';
-        for(var i = 0; i < this.menu.length; i++){
-          menus+=this.menu[i].id+",";
-        }
-        menus = menus.substring(0, menus.length - 1)
-        console.info("menus",menus);
-        this.page = ask.articleList(menus);
+//        var menus='';
+//        for(var i = 0; i < this.menu.length; i++){
+//          menus+=this.menu[i].id+",";
+//        }
+//        menus = menus.substring(0, menus.length - 1)
+//        this.page = ask.articleList(menus);
+        this.page = ask.articleList(columnId);
         await this.next();
-
         Event.listen(Event.USER_LOGOUT, this.clear.bind(this), this);
       } catch (e) {
         Tips.modal(e.message);

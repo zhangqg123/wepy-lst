@@ -22,14 +22,14 @@
       </scroll-view>
 
     </view>
-    <!--操作栏--> 
-    <view >
-      <ActionBar @optAsk.user="optAsk" @back.user="back" create="我来提问"  cancelText="返回" noCancel="0"  /> 
-    </view>
   </view>
   <view wx:if="{{display == 'true'}}">
     <SideCategory :display.sync="display" :tab.sync="categories" @change.user="switchTab"  />    
   </view>
+    <!--操作栏--> 
+    <view >
+      <ActionBar @optAsk.user="optAsk" @back.user="back" create="我来提问"  cancelText="返回" noCancel="0"  /> 
+    </view>
 </template>
 
 <script>
@@ -115,19 +115,11 @@
 
     methods = {
       // 点击分类
-      switchTab(selectedId) {
-//        this.tab.categoryId = selectedId;
-        this.reload();
-      },
-
-      change() {
-
-        if(this.tab.selectedId=="category"){
-          this.display="true";
-        }else{
-          this.categories.selectedId="";
-//          if(this.tab.selectedId!="all"){
-            this.reload();          
+      switchTab(option) {
+//        this.tab.categoryId = option.selectedId;
+        console.info("option",option);
+        wx.setNavigationBarTitle({
+          title: option*
 //          }
         }
       },
@@ -136,22 +128,26 @@
           ask.collectFormIds(info.formId);
         }
         if (info.mode=="display" || auth.isLogin()) {
-          const roleCode = auth.getConfig('role_code');
-          if(roleCode!=null){
-            console.info('roleCode',roleCode);
-            if(info.mode=="display"){
-              this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
-            }else{
+          if(info.mode=="display"){
+            this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
+          }else{
+            const roleCode = auth.getConfig('role_code');
+            if(roleCode!=null){
+              console.info('roleCode',roleCode);
               if(roleCode.indexOf(info.mode) != -1){
+                if(this.mode=="create"||info.categoryId==null){
+                  info.categoryId=this.categories.selectedId;
+                }
+                console.info("info",info);
                 this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});
               }else{
                 Tips.modal("没有权限");
               }
+            }else{
+              this.$root.$navigate('/pages/login/index',{askId: info.askId,mode: info.mode});
             }
-
-          }else{
-            this.$root.$navigate('/pages/login/index',{askId: info.askId,mode: info.mode});
           }
+
         }else{
           this.$root.$navigate('/pages/login/index',{askId: info.askId,mode: info.mode});
         }
