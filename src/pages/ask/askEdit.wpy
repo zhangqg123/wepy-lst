@@ -40,8 +40,15 @@
         <view class="weui-cells-form">
           <view class="weui-cell">
             <view class="weui-cell__hd">
-              <view class="weui-label"><text class="primary x1">提问视频</text></view>
+              <view class="weui-label">
+                <text class="primary x1 mr20">提问视频</text>
+                
+              </view>
             </view>
+            <view class="weui-cell__bd" wx:if="{{askItem.askStatus == 11}}">
+              <view class="ask-item" ><text class="danger x1 ml20">未审核,无法播放</text></view>
+            </view>
+
           </view>
           <view class="section">
             <video class= "videoCss" src='{{srcUrl}}' ></video>
@@ -60,6 +67,9 @@
             <view class="weui-cell__hd">
               <view class="weui-label"><text class="primary x1">回答提问</text></view>
             </view>
+            <view class="weui-cell__bd" wx:if="{{askItem.askStatus == 31}}">
+              <view class="ask-item" ><text class="danger x1 ml20">未审核,无法播放</text></view>
+            </view>
           </view>
           <view class="section">
             <video class= "videoCss" src='{{srcAnswerUrl}}' ></video>
@@ -76,10 +86,10 @@
         </view>
       </view> 
   </view>
-  <view wx:if="{{mode == 'trans'||mode == 'create'||mode == 'answer'}}">
+  <view wx:if="{{mode == 'trans' || mode == 'create' || mode == 'askEdit' || mode == 'answer'}}">
     <form bindsubmit="submit" report-submit="true">
       <!--创建视频-->
-      <view class="detail-box" wx:if="{{mode == 'create'}}">
+      <view class="detail-box" wx:if="{{ mode == 'create' || mode == 'askEdit'}}">
         <view class="weui-cells-form">
           <view class="weui-cell">
             <view class="weui-cell__bd"><text class="primary x1">我要提问</text>
@@ -121,8 +131,8 @@
                 <input class="weui-input" id="askUrl" value="{{chooseDisplay}}" placeholder="请选择视频上传" />
               </view>
               <view class="ml20 row" style="width: 325rpx;">
-                <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo('create')">选择</button>
-                <button class="weui-btn mini-btn"  type="weak" size="mini" @tap="uploadVideo('create')">上传</button>
+                <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo({{mode}})">选择</button>
+                <button class="weui-btn mini-btn"  type="weak" size="mini" @tap="uploadVideo({{mode}})">上传</button>
               </view>
             </view>
           </view>
@@ -130,7 +140,7 @@
       </view> 
 
       <!--编辑视频-->
-      <view class="detail-box" wx:if="{{mode == 'trans'||mode=='answer'}}">
+      <view class="detail-box" wx:if="{{ mode == 'trans'||mode=='answer'}}">
         <view class="weui-cells-form">
           <view class="weui-cell">
             <view class="weui-cell__bd"><text class="primary x1">编辑信息</text>
@@ -158,7 +168,7 @@
             <view class="weui-cell__hd">
               <view class="weui-label">简介</view>
             </view>
-            <view class="weui-cell__bd" wx:if="{{mode == 'trans'}}">
+            <view class="weui-cell__bd" wx:if="{{mode == 'askEdit'||mode == 'trans'}}">
               <textarea class="weui-textarea ask-item" id="description" value="{{input.description}}" placeholder="请输入简介" style="height: 4.3em"  @input="input" />
             </view>
             <view class="weui-cell__bd" wx:if="{{mode == 'answer'}}">
@@ -295,9 +305,12 @@
           this.categoryId=option.categoryId;
         }
 
-        if(option.mode=="display" || option.mode=="trans" || option.mode=="answer"){
+        if(option.mode=="display" || option.mode=="askEdit" || option.mode=="trans" || option.mode=="answer"){
           if(option.mode=="display"){
             this.mode="display";
+          }
+          if(option.mode=="askEdit"){
+            this.mode="askEdit";
           }
           if(option.mode=="trans"){
             this.mode="trans";
@@ -347,7 +360,7 @@
 //              src: res.tempFilePath
 //            })
             self.uploadFlag=false;
-            if(option=="create"){
+            if(option=="create"||option=="askEdit"){
               self.chooseDisplay='已选择视频，请上传';
               self.chooseUrl=res.tempFilePath;
             }
@@ -368,7 +381,7 @@
       },
       async uploadVideo (option) {
         try {
-          if(option=="create"){
+          if(option=="create"||option=="askEdit"){
             if(this.chooseUrl!=null&&this.chooseUrl!=''){
               Tips.loading('上传中');
               const result = await ask.upload(this.chooseUrl);
@@ -461,6 +474,30 @@
               await Tips.modal('请上传视频');
             }
           }
+
+          if(this.mode=="askEdit"){
+            data.id=this.askItem.id;
+            data.askTitle=this.input.askTitle;
+            data.description=this.input.description;
+
+            if(this.uploadFlag==true && this.chooseUrl!=null&&this.chooseUrl!=''){
+              data.answerOpenId=openId;
+              data.askUrl = this.chooseUrl;
+              data.askStatus=11; // 31 回答提问未审核 32 回答审核通过
+              console.info("data",data);
+
+              await ask.updateAsk(data);
+              await Tips.success('更新成功！');
+
+              Event.emit(Event.ASK_LIST_UPDATE);
+              Event.emit(Event.JOB_LIST_UPDATE);
+              wepy.navigateBack();
+            }else{
+              Tips.loaded();
+              await Tips.modal('请上传视频');
+            }
+          }
+
           if(this.mode=="trans"){
             data.id=this.askItem.id;
             data.description=this.input.description;

@@ -119,10 +119,22 @@
 //        this.tab.categoryId = option.selectedId;
         console.info("option",option);
         wx.setNavigationBarTitle({
-          title: option*
+          title: option.columnName
+        })
+        this.reload();
+      },
+      change() {
+
+        if(this.tab.selectedId=="category"){
+          this.display="true";
+        }else{
+          this.categories.selectedId="";
+//          if(this.tab.selectedId!="all"){
+            this.reload();          
 //          }
         }
       },
+
       async optAsk(info) {
         if(info.formId !=null && info.formId != "the formId is a mock one"){
           ask.collectFormIds(info.formId);
@@ -133,12 +145,18 @@
           }else{
             const roleCode = auth.getConfig('role_code');
             if(roleCode!=null){
-              console.info('roleCode',roleCode);
+              
               if(roleCode.indexOf(info.mode) != -1){
                 if(this.mode=="create"||info.categoryId==null){
-                  info.categoryId=this.categories.selectedId;
+                  var cats=this.categories;
+
+                  if(this.categories.selectedId!=null&&this.categories.selectedId!=""){
+                    info.categoryId=this.categories.selectedId;
+                  }else{
+                    info.categoryId=cats[0].id;
+                  }
                 }
-                console.info("info",info);
+
                 this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});
               }else{
                 Tips.modal("没有权限");

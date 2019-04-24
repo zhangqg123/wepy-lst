@@ -80,12 +80,17 @@
 
         this.page = ask.askList(this.categories);
         await this.next();
-        console.info("this.page",this.page);
+        Event.listen(Event.JOB_LIST_UPDATE, this.updateAsk.bind(this), this);
       } catch (e) {
         Tips.modal(e.message);
       } finally {
         this.loaded();
       }
+    };
+
+    async updateAsk(){
+      console.info("updateAsk================JOBLIST");
+      this.reload();
     };
 
     params() {

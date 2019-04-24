@@ -13,6 +13,8 @@ export default class Event {
   static SKU_PAGE_NAVIGATE = 'SKU_PAGE_NAVIGATE';
 
   static ASK_LIST_UPDATE = 'ASK_LIST_UPDATE';
+
+  static JOB_LIST_UPDATE = 'JOB_LIST_UPDATE';
   // 商品列表更新事件
   static APPLY_LIST_UPDATE = 'APPLY_LIST_UPDATE';
   // 卡券列表更新事件

@@ -3,7 +3,7 @@
 
   <view class="item-box column" >
     <view class="goods-box row">
-      <view class="info-box column" @tap="displayAsk({{ask.id}})">
+      <view class="info-box column" @tap="displayAsk({{ask.id}},{{ask.askStatus}})">
         <view class="title-box">
           <text class="xxl">{{ask.askTitle}}</text>
         </view>
@@ -46,8 +46,13 @@
     };
     data = {};
     methods = {
-      async displayAsk(askId) {
-        this.$emit('optAsk',{askId: askId,mode:"display"});
+      async displayAsk(askId,status) {
+        if(status==13){
+          this.$emit('optAsk',{askId: askId,mode:"askEdit"});
+        }else{
+          this.$emit('optAsk',{askId: askId,mode:"display"});
+        }
+        
       },
     };
   }
