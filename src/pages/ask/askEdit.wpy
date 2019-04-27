@@ -46,7 +46,7 @@
               </view>
             </view>
             <view class="weui-cell__bd" wx:if="{{askItem.askStatus == 11}}">
-              <view class="ask-item" ><text class="danger x1 ml20">未审核,无法播放</text></view>
+              <view class="ask-item" ><text class="danger x1 ml20">请等待审核</text></view>
             </view>
 
           </view>
@@ -68,7 +68,7 @@
               <view class="weui-label"><text class="primary x1">回答提问</text></view>
             </view>
             <view class="weui-cell__bd" wx:if="{{askItem.askStatus == 31}}">
-              <view class="ask-item" ><text class="danger x1 ml20">未审核,无法播放</text></view>
+              <view class="ask-item" ><text class="danger x1 ml20">请等待审核</text></view>
             </view>
           </view>
           <view class="section">
@@ -87,7 +87,7 @@
       </view> 
   </view>
   <view wx:if="{{mode == 'trans' || mode == 'create' || mode == 'askEdit' || mode == 'answer'}}">
-    <form bindsubmit="submit" report-submit="true">
+    <form >
       <!--创建视频-->
       <view class="detail-box" wx:if="{{ mode == 'create' || mode == 'askEdit'}}">
         <view class="weui-cells-form">
@@ -126,16 +126,23 @@
           </view>
           <view class="section">
             <video class= "videoCss" src='{{srcUrl}}' ></video>
-            <view class="weui-cell weui-cell_input">
-              <view style="width: 425rpx;">
-                <input class="weui-input" id="askUrl" value="{{chooseDisplay}}" placeholder="请选择视频上传" />
+            <view class="row">
+              <view class="ml20" style="width: 425rpx;">
+                <input class="weui-input" id="askUrl"  value="{{chooseDisplay}}" placeholder="请选择视频上传" />
               </view>
-              <view class="ml20 row" style="width: 325rpx;">
-                <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo({{mode}})">选择</button>
-                <button class="weui-btn mini-btn"  type="weak" size="mini" @tap="uploadVideo({{mode}})">上传</button>
+              <view class="mt10 ml20 mr20 row-end" style="width: 325rpx;">
+                <form bindsubmit="chooseVideo({{mode}})" report-submit='true'>
+                  <button form-type="submit" class="weui-btn mini-btn" type="primary"  size="mini">选择</button>
+                </form> 
+                <form bindsubmit="uploadVideo({{mode}})" report-submit='true'>
+                  <button form-type="submit" class="weui-btn mini-btn" type="weak"  size="mini">上传</button>
+                </form> 
+          <!--      <button class="weui-btn mini-btn" type="primary" size="mini" @tap="chooseVideo({{mode}})">选择</button> -->
+          <!--      <button class="weui-btn mini-btn"  type="weak" size="mini" @tap="uploadVideo({{mode}})">上传</button> -->
               </view>
             </view>
           </view>
+
         </view>
       </view> 
 
@@ -248,7 +255,7 @@
 
 
       <!--操作栏-->
-      <ActionPanel :mode.sync="mode" @remove.user="remove"/>
+      <ActionPanel :mode.sync="mode" @submit.user="submit" @remove.user="remove"/>
     </form>
   </view>
 </view>
@@ -346,10 +353,15 @@
         this.loaded();
       }
     };
+    collect(formId){
+      if(formId !=null && formId != "the formId is a mock one"){
+        ask.collectFormIds(formId);
+      }
+    };
 
     methods = {
-      chooseVideo(option) {
-        console.info("option",option);
+      chooseVideo(option,e) {
+        this.collect(e.detail.formId);
         const self = this
         wx.chooseVideo({
           sourceType: ['album', 'camera'],
@@ -379,7 +391,8 @@
           }
         })
       },
-      async uploadVideo (option) {
+      async uploadVideo (option,e) {
+        this.collect(e.detail.formId);
         try {
           if(option=="create"||option=="askEdit"){
             if(this.chooseUrl!=null&&this.chooseUrl!=''){
@@ -446,17 +459,25 @@
       },
 
       // 提交表单
-      async submit(e) {
+      async submit(option) {
         try{
+          this.collect(option.formId);
           if (!this.validate()) {
             return;
           }
           var data = {
 
           };
-          var openId = await auth.getConfig('openId');
-        
           Tips.loading('保存中', true);
+          var openId = await auth.getConfig('openId');
+          var formIds = wepy.$instance.globalData.globalFormIds;  // 获取全局推送码
+          if (formIds!=null && formIds.length>0) {
+              formIds = JSON.stringify(formIds);  // 转换成JSON字符串
+              wepy.$instance.globalData.globalFormIds = [];  
+              var result=await ask.uploadFormIds(formIds);
+              console.info("result",result);
+          }
+        
           if(this.mode=="create"){
             data=this.input;
             data.askOpenId=openId;
@@ -548,7 +569,8 @@
             }
           }
         } catch (e) {
-          this.tips(e.message);
+          await Tips.modal(e.message);
+//          this.tips(e.message);
         } finally {
           this.loaded();
         }

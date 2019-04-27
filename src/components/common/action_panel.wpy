@@ -2,7 +2,12 @@
   <view class="main-container">
     <view class="zan-panel">
       <view class="zan-btns">
-        <button class="zan-btn zan-btn--fill" form-type="submit">{{submitText}}</button>
+    <form bindsubmit="optAsk" report-submit='true'>
+      <button form-type="submit" class="zan-btn zan-btn--fill">
+        {{submitText}}
+      </button>
+    </form>
+    <!--    <button class="zan-btn zan-btn--fill" form-type="submit">{{submitText}}</button> -->
         <button class="zan-btn" @tap="remove" wx:if="{{mode == 'edit'}}">删除</button>
       </view>
     </view>
@@ -18,8 +23,9 @@
       }
     };
     methods = {
-      submit () {
-        this.$emit('submit');
+      optAsk (e) {
+        var formId=e.detail.formId;
+        this.$emit('submit',{formId:formId});
       },
       remove () {
         this.$emit('remove');

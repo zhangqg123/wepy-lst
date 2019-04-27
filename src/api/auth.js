@@ -78,26 +78,44 @@ export default class auth extends base {
   /**
    * 检查登录状态
    */
-  static isLogin() {
-    const loginCode = this.getConfig('login_code');
-    return loginCode != null;
+  static async isLogin() {
+
+//    const loginCode = this.getConfig('login_code');
+    const token = this.getConfig('token');
+    console.info("token",token);
+
+    var result=false;
+    if(token!=null){
+      console.info("expireTime",new Date().getTime() - token.expireTime);
+
+      if(token.expireTime < new Date().getTime()){
+
+          const url = `${this.baseUrl2}/rest/tokens/check?token=${token.value}`;
+          var data= await this.post(url, null);
+          console.info("data.success",data.success);
+          let newtoken = {
+              value: token.value,
+              expireTime: new Date().getTime() + 6800000
+          }
+          await this.removeConfig('token');
+          await this.setConfig('token', newtoken);
+          result=data.success;
+        
+      }else{
+        console.info("no need",true);
+        result=true;
+      }
+    }
+    return result;
   }
   /**
    * 登录
    */
   static async login(param) {
     var aesPassword = en.encrypt(param.password,aesKey,ivKey);//aes密码
-    param.password=aesPassword;
-    param.usertype=usertype;
-    var nonce_str = rand.getRand();//随机数
-    var postParams=[];
-    postParams[0]=["nonce_str",nonce_str];
-    postParams[1]=["status","login"];
-    postParams[2]=["xcxId",xcxId];
-    var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/lhs/login.do?nonce_str=${nonce_str}&sign=${signVal}&status=login&xcxId=${xcxId}`;
+    var username=param.username;
 
-//    const url = `${this.baseUrl2}/rest/tokens?username=interfaceuser&password=123456`;
+    const url = `${this.baseUrl2}/rest/tokens?username=${username}&password=${aesPassword}&xcxId=${xcxId}`;
 
     const data= await this.post(url, param);
     return data;
@@ -133,14 +151,14 @@ export default class auth extends base {
    * 用户信息
    */
   static async userInfo() {
-    var nonce_str = rand.getRand();//随机数
-    var postParams=[];
-    postParams[0]=["nonce_str",nonce_str];
-    postParams[1]=["status","userInfo"];
-    var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/lhs/userInfo.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userInfo`;
-    const data = await this.get(url);
-    return data.obj;
+    const loginCode = this.getConfig('login_code');
+//    var nonce_str = rand.getRand();//随机数
+//    postParams[0]=["nonce_str",nonce_str];
+//    postParams[1]=["status","userInfo"];
+//    var signVal=sign.createSign(postParams,appId);//签名
+//    const url = `${this.baseUrl2}/api/lhs/userInfo.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userInfo`;
+    const url = `${this.baseUrl2}/rest/jeecg/lhSRestUser/${loginCode}`;
+    return await this.get(url);
   }
   /**
    * 用户关注

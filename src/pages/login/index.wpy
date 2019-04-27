@@ -74,8 +74,8 @@
       } catch (e) {
       } finally {
         await auth.removeConfig('login_code');
+        await auth.removeConfig('token');
         await auth.removeConfig('role_code');
-//        await auth.removeConfig('openId');
         await auth.removeConfig('status');
         this.loaded();
       }
@@ -98,11 +98,16 @@
               password: this.loginMessage.password
             };
             data = await auth.login(param);
+
             if (data.success == true) {
               await auth.setConfig('login_code', data.attributes.login_code);
+              let token = {
+                  value: data.attributes.token,
+                  expireTime: new Date().getTime() + 6800000
+              }
+              await auth.setConfig('token', token);
               await auth.setConfig('role_code', data.attributes.role_code);
               await auth.setConfig('status',data.attributes.status);
-              console.info("roleCode",auth.getConfig("role_code"));
 
               if(this.redirectUrl!=null){
                 this.$redirect(this.redirectUrl,{askId: this.askId});

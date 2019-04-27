@@ -73,6 +73,7 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import auth from '../../api/auth';
+  import ask from '../../api/ask';
   import exam from '../../api/exam';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -101,27 +102,32 @@
 
     async load () {
       try {
-        const loginCode = auth.getConfig('login_code');
-        if (loginCode != null) {
-          this.userInfo = await auth.userInfo();
+        if (await auth.isLogin()){
+          var ret = await auth.userInfo();
+          this.userInfo=ret.obj;
+          console.info("this.userInfo",this.userInfo);
           if(this.userInfo!=null){
             if(this.userInfo.status==3){
               this.userInfo.realname=this.userInfo.phone;
             }
           }else{
             await auth.removeConfig('login_code');
+            await auth.removeConfig('token');
             await auth.removeConfig('role_code');
-//            await auth.removeConfig('openId');
             await auth.removeConfig('status');
             this.userInfo={};
             this.userInfo.status=0;
             this.userInfo.realname="登录获取更多服务";
-
           }
         }else{
+          await auth.removeConfig('login_code');
+          await auth.removeConfig('token');
+          await auth.removeConfig('role_code');
+          await auth.removeConfig('status');
+          this.userInfo={};
           this.userInfo.status=0;
-          this.userInfo.realname="登录获取更多服务";
-        }
+          this.userInfo.realname="登录获取更多服务";          
+        } 
       } catch (e) {
         Tips.modal(e.message);
       } finally {
@@ -131,27 +137,35 @@
 
     collect(formId){
       if(formId !=null && formId != "the formId is a mock one"){
-        exam.collectFormIds(formId);
+        ask.collectFormIds(formId);
       }
     };
 
     async uploadFormIds(){
-      var openId = auth.getConfig('openId');
-      if (openId == null) {
+      try{
+        var openId = auth.getConfig('openId');
+        if (openId == null) {
 
-        openId=await auth.jscode2session();
-        await auth.setConfig('openId', openId);
+          openId=await auth.jscode2session();
+          await auth.setConfig('openId', openId);
+        }
+        var formIds = wepy.$instance.globalData.globalFormIds;  // 获取全局推送码
+        if (formIds!=null && formIds.length>0) {
+            formIds = JSON.stringify(formIds);  // 转换成JSON字符串
+            wepy.$instance.globalData.globalFormIds = [];  
+            await ask.uploadFormIds(formIds);
+        }
+      } catch (e) {
+        Tips.error(e.message)
+      } finally {
+        this.loaded();
       }
-      var formIds = wepy.$instance.globalData.globalFormIds;  // 获取全局推送码
-      if (formIds!=null && formIds.length>0) {
-          formIds = JSON.stringify(formIds);  // 转换成JSON字符串
-          wepy.$instance.globalData.globalFormIds = [];  
-          await exam.uploadFormIds(formIds);
-      }
+
     };
     methods = {
       async myOpt (mode,e) {
         this.collect(e.detail.formId);
+        this.uploadFormIds();
         if(this.userInfo.status==0){
           this.$root.$navigate('/pages/login/index');
         }else{
@@ -209,7 +223,6 @@
       async follow (e) {
         try{
           this.collect(e.detail.formId);
-          this.uploadFormIds();
           var data = await auth.userFollow();
           console.info("data",data);
           if(data.success==true){

@@ -21,7 +21,7 @@ export default class exam extends base {
           formIds = [];
       let data = {
           formId: formId,
-          expireTime: new Date().getTime() + 60480000
+          expireTime: new Date().getTime() + 604800000
       }
       formIds.push(data);
       wepy.$instance.globalData.globalFormIds = formIds;

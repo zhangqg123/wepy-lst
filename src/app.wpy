@@ -55,9 +55,13 @@
      */
     createAuthHeader() {
       const loginCode = wepy.$instance.globalData.auth.login_code;
+      const token = wepy.$instance.globalData.auth.token;
       const header = {};
       if (loginCode) {
         header['login-code'] = loginCode;
+      }
+      if (token) {
+        header['X-AUTH-TOKEN'] = token.value;
       }
       return header;
     }
@@ -70,13 +74,10 @@
       console.info('[ext] init ext data', ext);
       Object.assign(wepy.$instance.globalData, ext);
       this.syncStoreConfig('login_code');
+      this.syncStoreConfig('token');
       this.syncStoreConfig('role_code');
       this.syncStoreConfig('status');
       this.syncStoreConfig('openId');
-
-//      this.syncStoreConfig({'login_code': 'login_code'}, 'login_code');
-//      this.syncStoreConfig({'status': 'status'}, 'status');
-//      this.syncStoreConfig({'openId': 'openId'}, 'openId');
     }
     syncStoreConfig(key) {
       try {

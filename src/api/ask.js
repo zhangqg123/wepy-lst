@@ -15,13 +15,12 @@ export default class ask extends base {
   }
 
   static  collectFormIds (formId) { 
-    console.info("formId",formId);
       let formIds = wepy.$instance.globalData.globalFormIds;  // 获取全局推送码数组
       if (!formIds)
           formIds = [];
       let data = {
           formId: formId,
-          expireTime: new Date().getTime() + 60480000
+          expireTime: new Date().getTime() + 604800000
       }
       formIds.push(data);
       wepy.$instance.globalData.globalFormIds = formIds;
@@ -124,13 +123,7 @@ export default class ask extends base {
   static async upload(filePath) {
     var openId=wepy.$instance.globalData.auth["openId"];
 
-    var nonce_str = rand.getRand();//随机数
-    var postParams=[];
-    postParams[0]=["nonce_str",nonce_str];
-    postParams[1]=["status","upload"];
-    postParams[2]=["openId",openId];
-    var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/lst/doUpload.do?openId=${openId}&nonce_str=`+nonce_str+`&sign=`+signVal+`&status=upload`;
+    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/doUpload?openId=${openId}`;
     const param = {
       url,
       filePath,
@@ -139,23 +132,12 @@ export default class ask extends base {
     return await wepy.uploadFile(param);
   }
   static async createAsk(ask) {
-    var nonce_str = rand.getRand();//随机数
-    var postParams=[];
-    postParams[0]=["nonce_str",nonce_str];
-    postParams[1]=["status","createAsk"];
-    var signVal=sign.createSign(postParams,appId);//签名
-
-    const url = `${this.baseUrl2}/api/lst/createAsk.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=createAsk`;
+    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/createAsk?xcxId=${xcxId}`;
     return await this.post(url, ask);
   }
 
   static async updateAsk(ask) {
-    var nonce_str = rand.getRand();//随机数
-    var postParams=[];
-    postParams[0]=["nonce_str",nonce_str];
-    postParams[1]=["status","updateAsk"];
-    var signVal=sign.createSign(postParams,appId);//签名
-    const url = `${this.baseUrl2}/api/lst/updateAsk.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=updateAsk`;
+    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/updateAsk`;
     return await this.post(url, ask);
   }
 
@@ -174,14 +156,15 @@ export default class ask extends base {
   }
   static async uploadFormIds(formIds){
     var openId=wepy.$instance.globalData.auth["openId"];
-    var nonce_str = rand.getRand();//随机数
-    var postParams=[];
-    postParams[0]=["nonce_str",nonce_str];
-    postParams[1]=["status","uploadFormIds"];
-    postParams[2]=["formIds",formIds];
-    postParams[3]=["openId",openId];
-    var signVal=sign.createSign(postParams,appId);
-    const url = `${this.baseUrl2}/api/main/exam/uploadFormIds.do?nonce_str=${nonce_str}&sign=${signVal}&status=uploadFormIds&openId=${openId}&formIds=${formIds}`;
+//    var nonce_str = rand.getRand();//随机数
+//    var postParams=[];
+//    postParams[0]=["nonce_str",nonce_str];
+//    postParams[1]=["status","uploadFormIds"];
+//    postParams[2]=["formIds",formIds];
+//    postParams[3]=["openId",openId];
+//    var signVal=sign.createSign(postParams,appId);
+//    const url = `${this.baseUrl2}/api/main/exam/uploadFormIds.do?nonce_str=${nonce_str}&sign=${signVal}&status=uploadFormIds&openId=${openId}&formIds=${formIds}`;
+    const url = `${this.baseUrl2}/rest/lhs/main/uploadFormIds?openId=${openId}&formIds=${formIds}`;
     const data=await this.get(url);
     return data;
 

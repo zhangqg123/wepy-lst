@@ -139,7 +139,7 @@
         if(info.formId !=null && info.formId != "the formId is a mock one"){
           ask.collectFormIds(info.formId);
         }
-        if (info.mode=="display" || auth.isLogin()) {
+        if (info.mode=="display" || await auth.isLogin()) {
           if(info.mode=="display"){
             this.$root.$navigate('/pages/ask/askEdit', {categoryId:info.categoryId,askId: info.askId,mode: info.mode});       
           }else{
