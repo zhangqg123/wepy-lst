@@ -152,11 +152,6 @@ export default class auth extends base {
    */
   static async userInfo() {
     const loginCode = this.getConfig('login_code');
-//    var nonce_str = rand.getRand();//随机数
-//    postParams[0]=["nonce_str",nonce_str];
-//    postParams[1]=["status","userInfo"];
-//    var signVal=sign.createSign(postParams,appId);//签名
-//    const url = `${this.baseUrl2}/api/lhs/userInfo.do?nonce_str=` + nonce_str + `&sign=` + signVal+ `&status=userInfo`;
     const url = `${this.baseUrl2}/rest/jeecg/lhSRestUser/${loginCode}`;
     return await this.get(url);
   }

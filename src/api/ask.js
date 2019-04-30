@@ -120,10 +120,10 @@ export default class ask extends base {
     return data.obj;
   }
   
-  static async upload(filePath) {
+  static async upload(filePath,existFile) {
     var openId=wepy.$instance.globalData.auth["openId"];
 
-    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/doUpload?openId=${openId}`;
+    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/doUpload?openId=${openId}&existFile=${existFile}`;
     const param = {
       url,
       filePath,
@@ -137,7 +137,7 @@ export default class ask extends base {
   }
 
   static async updateAsk(ask) {
-    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/updateAsk`;
+    const url = `${this.baseUrl2}/rest/lhs/lhSRestAsk/updateAsk?xcxId=${xcxId}`;
     return await this.post(url, ask);
   }
 

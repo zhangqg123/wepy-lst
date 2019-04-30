@@ -125,6 +125,10 @@
               if(data.attributes.register==1){
                 this.tips('用户名或密码错误');
               }
+              if(data.attributes.register==3){
+                this.tips('用户名被锁定');
+              }
+
             }
 
         } catch (e) {

@@ -202,7 +202,7 @@
 
           <view class="section">
             <video class= "videoCss" src='{{srcTransAskUrl}}'></video>
-            <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans'}}">
+            <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans' && (askItem.askStatus == 12 || askItem.askStatus == 21)}}" >
               <view style="width: 425rpx;">
                 <input class="weui-input" id="transAskUrl" value="{{chooseTransAskDisplay}}" placeholder="请选择上传视频"/>
               </view>
@@ -220,7 +220,7 @@
           </view>
           <view class="section">
             <video class= "videoCss" src='{{srcAnswerUrl}}' ></video>
-            <view class="weui-cell weui-cell_input" wx:if="{{mode == 'answer'}}">
+            <view class="weui-cell weui-cell_input" wx:if="{{mode == 'answer' && (askItem.askStatus == 21 || askItem.askStatus == 31)}}">
               <view style="width: 425rpx;">
                 <input class="weui-input" id="answerUrl" value="{{chooseAnswerDisplay}}" placeholder="请选择上传视频"/>
               </view>
@@ -239,7 +239,7 @@
 
           <view class="section" wx:if="{{mode == 'trans'}}">
             <video class= "videoCss" src='{{srcTransAnswerUrl}}'></video>
-            <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans'}}">
+            <view class="weui-cell weui-cell_input" wx:if="{{mode == 'trans' && (askItem.askStatus == 32 || askItem.askStatus == 41)}}">
               <view style="width: 425rpx;">
                 <input class="weui-input" id="transAnswerUrl" value="{{chooseTransAnswerDisplay}}" placeholder="请选择上传视频"/>
               </view>
@@ -358,6 +358,13 @@
         ask.collectFormIds(formId);
       }
     };
+    getOldFile(oldUrl){
+      if(oldUrl!=null || oldUrl!=''){
+        var obj=oldUrl.lastIndexOf("/");
+        return oldUrl.substr(obj+1);
+      }
+      return null;
+    }            
 
     methods = {
       chooseVideo(option,e) {
@@ -396,8 +403,12 @@
         try {
           if(option=="create"||option=="askEdit"){
             if(this.chooseUrl!=null&&this.chooseUrl!=''){
+              var oldUrl=this.srcUrl;
+              var existFile=this.getOldFile(oldUrl);
+
+              console.info('oldUrl',oldUrl);
               Tips.loading('上传中');
-              const result = await ask.upload(this.chooseUrl);
+              const result = await ask.upload(this.chooseUrl,existFile);
               const file = JSON.parse(result);
 
               this.chooseDisplay='已上传视频，请保存';
@@ -410,8 +421,10 @@
           }
           if(option=="trans"){
             if(this.chooseTransAskUrl!=null&&this.chooseTransAskUrl!=''){
+              var oldUrl=this.srcTransAskUrl;
+              var existFile=this.getOldFile(oldUrl);
               Tips.loading('上传中');
-              const result = await ask.upload(this.chooseTransAskUrl);
+              const result = await ask.upload(this.chooseTransAskUrl,existFile);
               const file = JSON.parse(result);
               this.chooseTransAskDisplay='已上传视频，请保存';
               this.chooseTransAskUrl=file.attributes.fileKey;
@@ -421,8 +434,10 @@
           }
           if(option=="answer"){
             if(this.chooseAnswerUrl!=null&&this.chooseAnswerUrl!=''){
+              var oldUrl=this.srcAnswerUrl;
+              var existFile=this.getOldFile(oldUrl);
               Tips.loading('上传中');
-              const result = await ask.upload(this.chooseAnswerUrl);
+              const result = await ask.upload(this.chooseAnswerUrl,existFile);
               const file = JSON.parse(result);
               this.chooseAnswerDisplay='已上传视频，请保存';
               this.chooseAnswerUrl=file.attributes.fileKey;
@@ -432,8 +447,10 @@
           }
           if(option=="transAnswer"){
             if(this.chooseTransAnswerUrl!=null&&this.chooseTransAnswerUrl!=''){
+              var oldUrl=this.srcTransAnswerUrl;
+              var existFile=this.getOldFile(oldUrl);
               Tips.loading('上传中');
-              const result = await ask.upload(this.chooseTransAnswerUrl);
+              const result = await ask.upload(this.chooseTransAnswerUrl,existFile);
               const file = JSON.parse(result);
               this.chooseTransAnswerDisplay='已上传视频，请保存';
               this.chooseTransAnswerUrl=file.attributes.fileKey;
