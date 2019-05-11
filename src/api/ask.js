@@ -44,9 +44,9 @@ export default class ask extends base {
      return data;
   }
   static async queryAllAdImages () {
-    const url = `${this.baseUrl2}/work/cms/queryAllAdImages.do`;
+    const url = `${this.baseUrl2}/work/cms/queryAllAdImages.do?xcxId=${xcxId}`;
     const data=await this.get(url);
-    return data;
+    return data.obj;
   }
   static async getMenuList () {
     const url = `${this.baseUrl2}/work/cms/lstMenu.do?xcxId=${xcxId}`;

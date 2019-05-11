@@ -151,7 +151,9 @@ function html2json(html, bindName) {
             if (node.tag === 'img') {
                 node.imgIndex = results.images.length;
               var imgUrl = node.attr.src;
-//                var imgUrl = server_url+node.attr.src;
+              if(imgUrl.indexOf('http')==-1){
+                imgUrl = server_url+node.attr.src;
+              }
                 if (imgUrl[0] == '') {
                     imgUrl.splice(0, 1);
                 }
@@ -184,8 +186,10 @@ function html2json(html, bindName) {
 
             //临时记录source资源
             if(node.tag === 'source'){
-//                results.source = server_url+ node.attr.src;
                 results.source = node.attr.src;
+                if(results.source.indexOf('http')==-1){
+                   results.source = server_url+ node.attr.src;
+                }
             }
 
             if (unary) {

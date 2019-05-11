@@ -50,8 +50,12 @@
             </view>
 
           </view>
-          <view class="section">
-            <video class= "videoCss" src='{{srcUrl}}' ></video>
+          <view class="section" >
+            <video class= "videoCss" src='{{srcUrl}}' poster="{{srcUrl?posterUrl:''}}" object-fit="cover">
+
+           </video>
+
+ 
           </view>
 
           <view class="weui-cell">
@@ -60,7 +64,7 @@
             </view>
           </view>
           <view class="section">
-            <video class= "videoCss" src='{{srcTransAskUrl}}'></video>
+            <video class= "videoCss" src='{{srcTransAskUrl}}' poster="{{srcTransAskUrl?posterUrl:''}}" object-fit="cover"></video>
           </view>
 
           <view class="weui-cell">
@@ -283,6 +287,7 @@
       },
       from: "home",
       categoryId: '',
+      posterUrl:'',
       srcUrl: '',
       srcTransAskUrl: '',
       srcAnswerUrl: '',
@@ -325,6 +330,8 @@
           if(option.mode=="answer"){
             this.mode="answer";
           }
+          this.posterUrl='https://hunchun.zqgzht.com/upload/img/lst/poster.png';
+
           this.askItem = await ask.queryOneAsk(option.askId);
           this.input=this.askItem;
           console.info("this.input",this.input);
@@ -550,6 +557,7 @@
             }
             if(this.uploadFlag==true && data.askStatus==21 || data.askStatus==41){
               data.dealOpenId=openId;
+              data.askOpenId=this.askItem.askOpenId;
               console.info("data",data);
 
               await ask.updateAsk(data);

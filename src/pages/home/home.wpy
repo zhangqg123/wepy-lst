@@ -134,16 +134,17 @@
 //        this.uploadFormIds();
         const upload = wepy.$instance.globalData.baseUrl2+'/upload/img/cms/';
         this.param.adUpload = upload;
-
-        const json = await Cache.menuList();
-        var adMenu = [];
-
-        for (var i = 0; i < json.length; ++i) {
-          if(json[i].serialNumber>110 && json[i].serialNumber<115){
-            adMenu.push(json[i]);
-          }
-        }
+//        const adMenu=await ask.queryAllAdImages();
+        const adMenu=await Cache.queryAd();
         console.info("adMenu",adMenu);
+        const json = await Cache.menuList();
+
+//        for (var i = 0; i < json.length; ++i) {
+//          if(json[i].serialNumber>110 && json[i].serialNumber<115){
+//            adMenu.push(json[i]);
+//          }
+//        }
+        
         this.param.adImgs=adMenu;
         this.menu = json;
         //初始化加载第一个栏目文章信息

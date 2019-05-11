@@ -13,6 +13,14 @@ export default class Cache {
     }
     return this.cache.get(KEY);
   }
+  static async queryAd() {
+    const KEY = 'AD';
+    if (this.isExpired(KEY)) {
+      const info = await ask.queryAllAdImages();
+      this.set(KEY, info);
+    }
+    return this.cache.get(KEY);
+  }
 
   static async dept() {
     const KEY = 'DEPT';

@@ -1,12 +1,19 @@
 <template lang="wxml">
   <import src="../../wxParse/wxParse.wxml"/>
-  <view class="art-header" style="display:display">
+<!--  <view class="art-header" style="display:display">
     <image class="art-img" src="{{imageHref}}"></image>
     <view class="art-title">{{detail.title}}</view> 
+  </view> -->
+  <view class="ml20 mr20 mt20 mb20">
+    <text class="xxxl primary mr20">标题</text>
+    <text class="xxxl default ml20">{{detail.title}}</text></view> 
+  <view class="ml20 mr20 mt20 mb20" >
+    <text class="xxl primary mr20">摘要</text>
+    <text class="xxl default ml20"  >{{detail.summary}}</text>
   </view>
-
+<view class="ml20 mr20">
   <template is="wxParse" data="{{wxParseData:article.nodes}}"/>
-
+</view>
 </template>
 
 
@@ -40,7 +47,7 @@
             title: this.detail.title  //页面标题为动态参数
           })
           this.imageHref = wepy.$instance.globalData.baseUrl2+'/upload/img/cms/' + this.detail.imageHref;
-          console.info("content",this.detail.content);
+          console.info("detail",this.detail);
           WxParse.wxParse('article', 'html', this.detail.content, this,5);
         } else {
           Tips.error(articlesJson.msg);
@@ -72,6 +79,11 @@
 
 <style lang="less">
   @import "../../wxParse/wxParse.wxss";
+  .summary {
+    display:block;
+    width:90%;
+    overflow:hidden;
+  }
   .art-header {
     position: relative;
     width: 100%;
@@ -85,8 +97,8 @@
   }
 
   .art-title {
-    position: absolute;
-    bottom: 36px;
+/*    position: absolute;
+    bottom: 36px; */
     left: 8px;
     font-size: 16px;
   }
